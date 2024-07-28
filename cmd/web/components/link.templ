@@ -1,0 +1,6 @@
+package components
+
+templ Link(title, href string) {
+    <a class="hover:text-indigo-900"
+    href={templ.URL(href)}>{ title }</a>
+}

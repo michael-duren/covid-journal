@@ -1,0 +1,32 @@
+package components
+
+type LinkData struct {
+    title string
+    href string
+}
+
+func NewLink(title string, link string) LinkData {
+    return LinkData{
+            title: title,
+            href: link,
+        }
+}
+
+var links []LinkData = []LinkData{
+    NewLink("Home", "/"),
+    NewLink("Journal", "/journal"),
+    NewLink("About", "/about"),
+}
+
+templ Header() {
+    <header class="px-8 py-4 flex justify-between">
+        <h2 class="text-2xl">Covid Journal</h2>
+        <ul class="flex gap-2">
+            for _, link := range links {
+                    <li>
+                        @Link(link.title, link.href)
+                    </li>
+                }
+        </ul>
+    </header>
+}
