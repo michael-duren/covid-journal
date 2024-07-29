@@ -28,3 +28,7 @@ tmp/
 # Project build
 main
 *templ.go
+
+db.go
+models.go
+query.sql.go

@@ -15,8 +15,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	// r.Get("/", s.HelloWorldHandler)
-
 	r.Get("/health", s.healthHandler)
 
 	fileServer := http.FileServer(http.FS(web.Files))
@@ -24,9 +22,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// r.Get("/web", templ.Handler(web.HelloForm()).ServeHTTP)
 	// r.Post("/hello", web.HelloWebHandler)
 
+    // pages
 	r.Get("/", templ.Handler(web.HomePage()).ServeHTTP)
 	r.Get("/journal", templ.Handler(web.JournalPage()).ServeHTTP)
 	r.Get("/about", templ.Handler(web.AboutPage()).ServeHTTP)
+
+    // apis
+    r.Get("/api/login", web.LoginHandler)
 
 	return r
 }

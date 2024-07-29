@@ -1,6 +1,7 @@
 package server
 
 import (
+	"covid-journal/internal/database"
 	"fmt"
 	"net/http"
 	"os"
@@ -8,14 +9,11 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-
-	"covid-journal/internal/database"
 )
 
 type Server struct {
+	db   database.Service
 	port int
-
-	db database.Service
 }
 
 func NewServer() *http.Server {
@@ -23,7 +21,7 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		port: port,
 
-		db: database.New(),
+		db: database.NewService(),
 	}
 
 	// Declare Server config
