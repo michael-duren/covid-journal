@@ -1,4 +1,4 @@
-package web
+package views
 
 import "covid-journal/cmd/web/components"
 
@@ -8,11 +8,11 @@ templ Base() {
 		<head>
 			<meta charset="utf-8"/>
 			<title>Go Blueprint Hello</title>
-            <link href="assets/css/output.css" rel="stylesheet"/>
+			<link href="assets/css/output.css" rel="stylesheet"/>
 			<script src="assets/js/htmx.min.js"></script>
 		</head>
 		<body>
-            @components.Header()
+			@components.Header()
 			<main class="px-8">
 				{ children... }
 			</main>

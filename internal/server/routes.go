@@ -2,6 +2,8 @@ package server
 
 import (
 	"covid-journal/cmd/web"
+	"covid-journal/cmd/web/handlers"
+	"covid-journal/cmd/web/views"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -22,13 +24,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// r.Get("/web", templ.Handler(web.HelloForm()).ServeHTTP)
 	// r.Post("/hello", web.HelloWebHandler)
 
-    // pages
-	r.Get("/", templ.Handler(web.HomePage()).ServeHTTP)
-	r.Get("/journal", templ.Handler(web.JournalPage()).ServeHTTP)
-	r.Get("/about", templ.Handler(web.AboutPage()).ServeHTTP)
+	// pages
+	r.Get("/", templ.Handler(views.HomePage()).ServeHTTP)
+	r.Get("/journal", templ.Handler(views.JournalPage()).ServeHTTP)
+	r.Get("/about", templ.Handler(views.AboutPage()).ServeHTTP)
 
-    // apis
-    r.Get("/api/login", web.LoginHandler)
+	// apis
+	r.Get("/api/login", handlers.LoginHandler)
 
 	return r
 }
