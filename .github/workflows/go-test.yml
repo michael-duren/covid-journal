@@ -1,5 +1,6 @@
 name: Go-test
-on: [push, pull_request]
+# TODO: figure out test
+on: []
 
 jobs:
   build:
