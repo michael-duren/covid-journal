@@ -1,9 +1,15 @@
 package views
 
-templ HomePage() {
+templ HomePage(userCookie string) {
 	@Base() {
 		<div>
 			<h1>Home Page</h1>
 		</div>
+		if (userCookie != "") {
+			<div>{ userCookie }</div>
+            <div>
+                <a href="/logout/google">Logout</a>
+            </div>
+		}
 	}
 }
