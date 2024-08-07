@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"covid-journal/internal/logging"
 	"fmt"
 	"net/http"
 
@@ -9,16 +10,12 @@ import (
 	"github.com/markbates/goth/gothic"
 )
 
-type providerKey string
-
-var pk = providerKey("provider")
-
 func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
+	logger := logging.NewDefaultLogger(logging.Debug)
 	provider := chi.URLParam(r, "provider")
-	fmt.Println("In getAuthCallbackFunction")
-	fmt.Println("Provider is ", provider)
+	logger.Infof("Provider is %s", provider)
 
-	r = r.WithContext(context.WithValue(r.Context(), pk, provider))
+	r = r.WithContext(context.WithValue(r.Context(), "provider", provider))
 
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
@@ -34,11 +31,13 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 func BeginAuth(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
+	logger := logging.NewDefaultLogger(logging.Debug)
+	logger.Infof("Provider is %s", provider)
 	if provider == "" {
 		http.Error(w, "Provider is missing", http.StatusBadRequest)
 		return
 	}
-	r = r.WithContext(context.WithValue(r.Context(), pk, provider))
+	r = r.WithContext(context.WithValue(r.Context(), "provider", provider))
 
 	// try to get the user without re-authenticating
 	if _, err := gothic.CompleteUserAuth(w, r); err == nil {

@@ -30,14 +30,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/error", templ.Handler(views.ErrorPage()).ServeHTTP)
 
 	// auth
+	r.Get("/auth/{provider}", handlers.BeginAuth)
 	r.Get("/auth/{provider}/callback", handlers.GetAuthCallbackFunction)
 	r.Get("/logout/{provider}", func(w http.ResponseWriter, r *http.Request) {
 		_ = gothic.Logout(w, r)
 		w.Header().Set("Location", "/")
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	})
-
-	r.Get("/auth/{provider}", handlers.BeginAuth)
 
 	return r
 }
