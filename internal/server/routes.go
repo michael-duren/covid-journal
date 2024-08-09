@@ -17,7 +17,7 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
-	logger := logging.NewDefaultLogger(logging.Debug)
+	logger := logging.NewDefaultLogger()
 	r.Use(
 		middleware.Logger,
 		internalMiddleware.UseQueryContext(s.db.Queries),
