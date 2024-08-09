@@ -11,9 +11,12 @@ DROP TABLE IF EXISTS USERS;
 -- Create USERS table
 CREATE TABLE USERS (
     USER_ID SERIAL PRIMARY KEY,
-    USER_NAME VARCHAR(100) NOT NULL,
-    USER_EMAIL VARCHAR(1024) NOT NULL,
-    USER_PASSWORD VARCHAR(256) NOT NULL
+    FIRST_NAME VARCHAR(100) NOT NULL,
+    LAST_NAME VARCHAR(100) NOT NULL,
+    EMAIL VARCHAR(1024) NOT NULL,
+    OAUTH_ID VARCHAR(1024),
+    AVATAR_URL VARCHAR(1024),
+    "LOCATION" VARCHAR(1024)
 );
 
 -- Create EXERCISES table
@@ -48,8 +51,22 @@ CREATE TABLE JOURNAL_ENTRIES (
 -- Seed data
 -- Get the USER_ID of the newly inserted user
 WITH inserted_user AS (
-    INSERT INTO USERS (USER_NAME, USER_EMAIL, USER_PASSWORD)
-    VALUES ('michael', 'michael@michael.com', 'jackpass')
+    INSERT INTO USERS 
+    (
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL,
+    OAUTH_ID,
+    AVATAR_URL,
+    "LOCATION")
+    VALUES (
+    'michael', 
+    'duren',
+    'michael@michael.com',
+    'abc123',
+    'https://www.example.com/avatar.jpg',
+    'New York, NY'
+    )
     RETURNING USER_ID
 )
 -- Seed JOURNALS with the new user's USER_ID
@@ -89,7 +106,7 @@ WITH user_and_journal AS (
     SELECT u.USER_ID, j.JOURNALS_ID
     FROM USERS u
     JOIN JOURNALS j ON u.USER_ID = j.USER_ID
-    WHERE u.USER_NAME = 'michael'
+    WHERE u.FIRST_NAME = 'michael'
 )
 INSERT INTO JOURNAL_ENTRIES (
     USER_ID,

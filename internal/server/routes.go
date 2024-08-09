@@ -3,7 +3,9 @@ package server
 import (
 	"covid-journal/cmd/web"
 	"covid-journal/cmd/web/views"
+	"covid-journal/internal/logging"
 	"covid-journal/internal/server/handlers"
+	internalMiddleware "covid-journal/internal/server/middleware"
 	"encoding/json"
 	"net/http"
 
@@ -15,7 +17,12 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	logger := logging.NewDefaultLogger(logging.Debug)
+	r.Use(
+		middleware.Logger,
+		internalMiddleware.UseQueryContext(s.db.Queries),
+		internalMiddleware.UseLoggerContext(&logger),
+	)
 
 	r.Get("/health", s.healthHandler)
 

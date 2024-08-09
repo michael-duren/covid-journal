@@ -2,23 +2,25 @@
 SELECT * FROM USERS
 WHERE USER_ID = $1 LIMIT 1;
 
+-- name: GetUserByEmail :one
+SELECT * FROM USERS
+WHERE EMAIL = $1 LIMIT 1;
+
 -- name: ListUsers :many
 SELECT * FROM USERS;
 
 -- name: CreateUser :one
 INSERT INTO USERS (
-    USER_NAME,
-    USER_EMAIL,
-    USER_PASSWORD
+    FIRST_NAME,
+    LAST_NAME,
+    EMAIL,
+    OAUTH_ID,
+    AVATAR_URL,
+    "LOCATION"
 ) VALUES (
-$1, $2, $3
+$1, $2, $3, $4, $5, $6
 )
 RETURNING *;
-
--- name: UpdateUserPassword :exec
-UPDATE USERS
-  SET USER_PASSWORD = $2
-WHERE USER_ID = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM USERS

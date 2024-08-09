@@ -13,19 +13,9 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// Service represents a service that interacts with a database.
-type Service interface {
-	// Health returns a map of health status information.
-	// The keys and values in the map are service-specific.
-	Health() map[string]string
-
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
-	Close() error
-}
-
-type service struct {
-	db *sql.DB
+type Service struct {
+	db      *sql.DB
+	Queries *Queries
 }
 
 var (
@@ -36,16 +26,18 @@ var (
 	host       = os.Getenv("DB_HOST")
 	schema     = os.Getenv("DB_SCHEMA")
 	environent = os.Getenv("APP_ENV")
-	dbInstance *service
+	dbInstance *Service
 )
+
+const ConnectionString = "postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s"
 
 func NewService() Service {
 	// Reuse Connection
 	if dbInstance != nil {
-		return dbInstance
+		return *dbInstance
 	}
 	var connStr string
-	if environent == "DEV" {
+	if environent == "local" {
 		connStr = fmt.Sprintf("postgres://localhost:%s/%s", port, database)
 	} else {
 		connStr = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
@@ -54,15 +46,21 @@ func NewService() Service {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbInstance = &service{
-		db: db,
+	dbInstance = &Service{
+		db:      db,
+		Queries: New(db),
 	}
-	return dbInstance
+	stats := dbInstance.Health()
+	fmt.Println("Printing database status")
+	for k, v := range stats {
+		fmt.Println(k, v)
+	}
+	return *dbInstance
 }
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
-func (s *service) Health() map[string]string {
+func (s *Service) Health() map[string]string {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
@@ -115,7 +113,7 @@ func (s *service) Health() map[string]string {
 // It logs a message indicating the disconnection from the specific database.
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
-func (s *service) Close() error {
+func (s *Service) Close() error {
 	log.Printf("Disconnected from database: %s", database)
 	return s.db.Close()
 }
