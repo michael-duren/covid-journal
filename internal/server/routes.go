@@ -3,6 +3,7 @@ package server
 import (
 	"covid-journal/cmd/web"
 	"covid-journal/cmd/web/views"
+	"covid-journal/internal/auth"
 	"covid-journal/internal/logging"
 	"covid-journal/internal/server/handlers"
 	internalMiddleware "covid-journal/internal/server/middleware"
@@ -12,16 +13,18 @@ import (
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/markbates/goth/gothic"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	logger := logging.NewDefaultLogger()
+	logger.Info("logger is working from RegisterRoutes")
+	sessionStore := auth.NewSession()
 	r.Use(
 		middleware.Logger,
+		internalMiddleware.UseLogging(logger),
 		internalMiddleware.UseQueryContext(s.db.Queries),
-		internalMiddleware.UseLoggerContext(&logger),
+		internalMiddleware.UseSessionContext(sessionStore),
 	)
 
 	r.Get("/health", s.healthHandler)
@@ -37,13 +40,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/error", templ.Handler(views.ErrorPage()).ServeHTTP)
 
 	// auth
-	r.Get("/auth/{provider}", handlers.BeginAuth)
-	r.Get("/auth/{provider}/callback", handlers.GetAuthCallbackFunction)
-	r.Get("/logout/{provider}", func(w http.ResponseWriter, r *http.Request) {
-		_ = gothic.Logout(w, r)
-		w.Header().Set("Location", "/")
-		w.WriteHeader(http.StatusTemporaryRedirect)
-	})
+	r.Get("/auth/{provider}", handlers.BeginAuthHandler)
+	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler)
+	r.Get("/logout/{provider}", handlers.LogoutHandler)
 
 	return r
 }

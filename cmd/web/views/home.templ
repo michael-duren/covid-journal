@@ -1,18 +1,19 @@
 package views
 
 import "covid-journal/internal/database"
+import "covid-journal/internal/models"
 
-templ HomePage(userCookie string, exercises []database.Exercise) {
+templ HomePage(user *models.User, exercises []database.Exercise) {
 	@Base() {
 		<div>
 			<h1>Home Page</h1>
+            <div>
+                if user != nil {
+                    <h2>Welcome, { user.FirstName } { user.LastName }</h2>
+                    <a href="/logout/google" class="font-bold text-2xl">Logout</a>
+                    }
+            </div>
 		</div>
-		if (userCookie != "") {
-			<div>{ userCookie }</div>
-			<div>
-				<a href="/logout/google">Logout</a>
-			</div>
-		}
 		for _, exercise := range exercises {
 			<div>
 				<h2>{ exercise.ExerciseName }</h2>

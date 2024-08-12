@@ -26,6 +26,19 @@ RETURNING *;
 DELETE FROM USERS
 WHERE USER_ID = $1;
 
+-- name: CreateUserSession :one
+INSERT INTO USER_SESSIONS (
+    SESSION_ID,
+    USER_ID,
+    SESSION_DATA
+) VALUES (
+    $1, $2, $3
+) RETURNING *;
+
+-- name: GetUserSessionBySessionId :one
+SELECT * FROM USER_SESSIONS
+WHERE SESSION_ID = $1 LIMIT 1;
+
 -- name: CreateJournalEntry :one
 INSERT INTO
 JOURNAL_ENTRIES (

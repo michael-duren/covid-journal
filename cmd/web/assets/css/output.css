@@ -585,6 +585,10 @@ video {
   line-height: 2rem;
 }
 
+.font-bold {
+  font-weight: 700;
+}
+
 .hover\:text-indigo-900:hover {
   --tw-text-opacity: 1;
   color: rgb(49 46 129 / var(--tw-text-opacity));

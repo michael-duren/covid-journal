@@ -22,7 +22,7 @@ func UseQueryContext(queryCtx *database.Queries) func(http.Handler) http.Handler
 func GetQueryContext(ctx context.Context) *database.Queries {
 	qc, ok := ctx.Value(QueryContextKey).(*database.Queries)
 	if !ok {
-		panic("query context not found. panicing and shutting down server.")
+		panic("query context not found. make sure you added the middleware to routes.go. panicing and shutting down server.")
 	}
 	return qc
 }
